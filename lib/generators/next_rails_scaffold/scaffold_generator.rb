@@ -11,7 +11,7 @@ module NextRailsScaffold
       source_root File.expand_path("templates", __dir__)
 
       argument :attributes, type: :array, default: [], banner: "field:type field:type"
-      class_option :frontend_dir, type: :string, default: "frontend", desc: "Specific frontend directory"
+      class_option :frontend_dir, type: :string, desc: "Specific frontend directory"
       class_option :package_manager, type: :string, desc: "Package manager to use for frontend project"
       class_option :skip_build, type: :boolean, default: false, desc: "Skip running Next.js build"
       class_option :skip_routes, type: :boolean, default: false, desc: "Skip adding resources to routes.rb"
@@ -56,7 +56,7 @@ module NextRailsScaffold
           language = File.exist?("tsconfig.json") ? "typescript" : "javascript"
 
           run("#{selected_package_manager.fetch} hygen scaffold #{language} #{name} #{mapped_attributes.join(" ")}")
-          if !options[:skip_build] && !@prompt.no?("Do you want to build your Next.js project?")
+          if !options[:skip_build] && @prompt && !@prompt.no?("Do you want to build your Next.js project?")
             run("#{selected_package_manager.run} build")
           end
         end
