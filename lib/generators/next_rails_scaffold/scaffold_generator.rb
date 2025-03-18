@@ -11,6 +11,7 @@ module NextRailsScaffold
       source_root File.expand_path("templates", __dir__)
 
       argument :attributes, type: :array, default: [], banner: "field:type field:type"
+      class_option :frontend_dir, type: :string, default: "frontend", desc: "Specific frontend directory"
       class_option :package_manager, type: :string, desc: "Package manager to use for frontend project"
       class_option :skip_build, type: :boolean, default: false, desc: "Skip running Next.js build"
       class_option :skip_routes, type: :boolean, default: false, desc: "Skip adding resources to routes.rb"
@@ -30,7 +31,8 @@ module NextRailsScaffold
       end
 
       def create_root_folder
-        empty_directory "frontend"
+        return if options[:frontend_dir].present?
+        empty_directory options[:frontend_dir] || "frontend"
       end
 
       # Check Javascript dependencies and create a new Next.js project. Install the the useful packages and create the
@@ -42,7 +44,7 @@ module NextRailsScaffold
 
         node_package_manager = NodePackageManager.new(shell)
 
-        inside("frontend") do
+        inside(options[:frontend_dir] || "frontend") do
           node_package_manager.check_node!
           node_package_manager.check_pm_version!
           node_package_manager.create_next_app!
